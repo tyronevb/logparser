@@ -9,7 +9,6 @@ import pandas as pd
 from collections import defaultdict
 import scipy.special
 
-
 def evaluate(groundtruth, parsedresult):
     """ Evaluation function to benchmark log parsing accuracy
     
@@ -24,16 +23,33 @@ def evaluate(groundtruth, parsedresult):
     -------
         f_measure : float
         accuracy : float
-    """ 
-    df_groundtruth = pd.read_csv(groundtruth)
-    df_parsedlog = pd.read_csv(parsedresult)
+    """
+    df_groundtruth = pd.read_csv(groundtruth)  # load the ground truth data
+    df_parsedlog = pd.read_csv(parsedresult)  # load the parsed data (output from the log parsing algorithm)
     # Remove invalid groundtruth event Ids
-    null_logids = df_groundtruth[~df_groundtruth['EventId'].isnull()].index
-    df_groundtruth = df_groundtruth.loc[null_logids]
-    df_parsedlog = df_parsedlog.loc[null_logids]
+
+    """
+    in the case that a particular log doesn't have an EventId, remove it from the ground truth
+    and the parsed logs
+    the ground truth and the parsed logs are based on the same base dataset
+    so the indexes of log messages are the same across the two sets of data
+    the eventIDs don't correspond between ground truth and parsed data
+    if a log message has a null id in ground truth it means there's no template
+    """
+
+    null_logids = df_groundtruth[~df_groundtruth['EventId'].isnull()].index  # find the index of EventIds that are null in the ground truth
+    df_groundtruth = df_groundtruth.loc[null_logids]  # remove entries with null EventIds from ground truth
+    df_parsedlog = df_parsedlog.loc[null_logids]  # remove entried with null EventIds from parsed log data structure
+
+    # using the EventIds, call the get_accuracy function to measure performance metrics
     (precision, recall, f_measure, accuracy) = get_accuracy(df_groundtruth['EventId'], df_parsedlog['EventId'])
-    print('Precision: %.4f, Recall: %.4f, F1_measure: %.4f, Parsing_Accuracy: %.4f'%(precision, recall, f_measure, accuracy))
-    return f_measure, accuracy
+    print("Precision: {precision:.4f}\nRecall: {recall:.4f}\n"
+          "F1 Measure: {f_measure:.4f}\nAccuracy: {accuracy:.4f}".format(precision=precision,
+                                                                         recall=recall,
+                                                                         f_measure=f_measure,
+                                                                         accuracy=accuracy,))
+    return f_measure, accuracy, precision, recall
+
 
 def get_accuracy(series_groundtruth, series_parsedlog, debug=False):
     """ Compute accuracy metrics between log parsing results and ground truth
@@ -89,10 +105,3 @@ def get_accuracy(series_groundtruth, series_parsedlog, debug=False):
     f_measure = 2 * precision * recall / (precision + recall)
     accuracy = float(accurate_events) / series_groundtruth.size
     return precision, recall, f_measure, accuracy
-
-
-
-
-
-
-
