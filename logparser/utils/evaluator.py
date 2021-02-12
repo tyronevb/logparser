@@ -43,11 +43,11 @@ def evaluate(groundtruth, parsedresult):
 
     # using the EventIds, call the get_accuracy function to measure performance metrics
     (precision, recall, f_measure, accuracy) = get_accuracy(df_groundtruth['EventId'], df_parsedlog['EventId'])
-    print("Precision: {precision:.4f}\nRecall: {recall:.4f}\n"
-          "F1 Measure: {f_measure:.4f}\nAccuracy: {accuracy:.4f}".format(precision=precision,
-                                                                         recall=recall,
-                                                                         f_measure=f_measure,
-                                                                         accuracy=accuracy,))
+    # print("Precision: {precision:.4f}\nRecall: {recall:.4f}\n"
+    #       "F1 Measure: {f_measure:.4f}\nAccuracy: {accuracy:.4f}".format(precision=precision,
+    #                                                                      recall=recall,
+    #                                                                      f_measure=f_measure,
+    #                                                                      accuracy=accuracy,))
     return f_measure, accuracy, precision, recall
 
 
