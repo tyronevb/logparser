@@ -68,6 +68,7 @@ class LogParser:
 
         self.para = Para(log_format=log_format, indir=indir, outdir=outdir, maxEventLen=maxEventLen, step2Support=step2Support,
                          PST=PST, CT=CT, lowerBound=lowerBound, upperBound=upperBound, rex=rex)
+        self.savePath = self.para.savePath
         self.partitionsL = []
         self.eventsL = []
         self.output = []
